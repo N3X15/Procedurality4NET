@@ -45,16 +45,12 @@ namespace Procedurality
 		
 		public static void Main(String[] args) 
 		{
-			Console.WriteLine("Procedurality CLI - (c)2009 Rob \"N3X15\" Nelson");
-			Console.WriteLine("_______________________________________________________________\n");
+            Console.WriteLine("Procedurality CLI - (c)2009-2013 Rob \"N3X15\" Nelson");
+            Console.WriteLine("_______________________________________________________________\n");
+            Console.WriteLine("For full licensing information, please see COPYING.");
 			
-			foreach(String s in args)
-			{
-				//Console.WriteLine(s);
-			}
 			Arguments CommandLine = new Arguments(args);
 			
-			String action = "help";
 			String file = "in.png";
 			String ofile = "out";
 			int seed = DateTime.Now.Millisecond;
@@ -247,7 +243,7 @@ Usage help:
 	                }
 	            }
 				return terrain;//.invert();
-			} catch(IOException e)
+			} catch(IOException)
 			{
 				Console.WriteLine("Cannot find "+file+", using blank channel.");
 				return new Channel(256,256);
