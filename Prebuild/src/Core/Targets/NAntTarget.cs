@@ -36,10 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 using Prebuild.Core.Attributes;
@@ -211,53 +209,13 @@ namespace Prebuild.Core.Targets
 				ss.WriteLine("	  <target name=\"{0}\">", "build");
 				ss.WriteLine("		  <echo message=\"Build Directory is ${project::get-base-directory()}/${build.dir}\" />");
 				ss.WriteLine("		  <mkdir dir=\"${project::get-base-directory()}/${build.dir}\" />");
-				ss.WriteLine("		  <copy todir=\"${project::get-base-directory()}/${build.dir}\" flatten=\"true\">");
-				ss.WriteLine("			  <fileset basedir=\"${project::get-base-directory()}\">");
-				foreach (ReferenceNode refr in project.References)
-				{
-					if (refr.LocalCopy)
-					{
-						ss.WriteLine("				  <include name=\"{0}", Helper.NormalizePath(Helper.MakePathRelativeTo(project.FullPath, BuildReference(solution, project, refr)) + "\" />", '/'));
-					}
-				}
-				
-				ss.WriteLine("			  </fileset>");
-				ss.WriteLine("		  </copy>");
-				if (project.ConfigFile != null && project.ConfigFile.Length!=0)
-				{
-					ss.Write("		  <copy file=\"" + project.ConfigFile + "\" tofile=\"${project::get-base-directory()}/${build.dir}/${project::get-name()}");
 
-					if (project.Type == ProjectType.Library)
-					{
-						ss.Write(".dll.config\"");
-					}
-					else
-					{
-						ss.Write(".exe.config\"");
-					}
-					ss.WriteLine(" />");
-				}
-
-				// Add the content files to just be copied
-				ss.WriteLine("		  {0}", "<copy todir=\"${project::get-base-directory()}/${build.dir}\">");
-				ss.WriteLine("			  {0}", "<fileset basedir=\".\">");
-				
-				foreach (string file in project.Files)
-				{
-					// Ignore if we aren't content
-					if (project.Files.GetBuildAction(file) != BuildAction.Content)
-							continue;
-
-					// Create a include tag
-					ss.WriteLine("				  {0}", "<include name=\"" + Helper.NormalizePath(PrependPath(file), '/') + "\" />");
-				}
-
-				ss.WriteLine("			  {0}", "</fileset>");
-				ss.WriteLine("		  {0}", "</copy>");
-
-				ss.Write("		  <csc");
+				ss.Write("		  <csc ");
 				ss.Write(" target=\"{0}\"", project.Type.ToString().ToLower());
 				ss.Write(" debug=\"{0}\"", "${build.debug}");
+				ss.Write(" platform=\"${build.platform}\"");
+
+
 				foreach (ConfigurationNode conf in project.Configurations)
 				{
 					if (conf.Options.KeyFile != "")
@@ -311,7 +269,12 @@ namespace Prebuild.Core.Targets
 				{
 					ss.Write(" win32icon=\"{0}\"", Helper.NormalizePath(project.AppIcon, '/'));
 				}
-				ss.WriteLine(">");
+                // This disables a very different behavior between VS and NAnt.  With Nant,
+                //    If you have using System.Xml;  it will ensure System.Xml.dll is referenced,
+                //    but not in VS.  This will force the behaviors to match, so when it works
+                //    in nant, it will work in VS.
+                ss.Write(" noconfig=\"true\"");
+                ss.WriteLine(">");
 				ss.WriteLine("			  <resources prefix=\"{0}\" dynamicprefix=\"true\" >", project.RootNamespace);
 				foreach (string file in project.Files)
 				{
@@ -357,7 +320,20 @@ namespace Prebuild.Core.Targets
 				foreach (ReferenceNode refr in project.References)
 				{
 					string path = Helper.NormalizePath(Helper.MakePathRelativeTo(project.FullPath, BuildReference(solution, project, refr)), '/');
-                    ss.WriteLine("                <include name=\"" + path + "\" />");
+                    if (refr.Path != null) {
+                        if (ExtensionSpecified(refr.Name))
+                        {
+                            ss.WriteLine ("                <include name=\"" + path + refr.Name + "\"/>");
+                        }
+                        else
+                        {
+                            ss.WriteLine ("                <include name=\"" + path + refr.Name + ".dll\"/>");
+                        }
+                    }
+                    else
+                    {
+                        ss.WriteLine ("                <include name=\"" + path + "\" />");
+                    }
 				}
 				ss.WriteLine("			  </references>");
 
@@ -490,15 +466,32 @@ namespace Prebuild.Core.Targets
 				ss.WriteLine("	  <property name=\"doc.dir\" value=\"doc\" />");
 				ss.WriteLine("	  <property name=\"project.main.dir\" value=\"${project::get-base-directory()}\" />");
 
-                // actually use active config out of prebuild.xml
-                ss.WriteLine("    <property name=\"project.config\" value=\"{0}\" />", solution.ActiveConfig);
+				// Use the active configuration, which is the first configuration name in the prebuild file.
+				Dictionary<string,string> emittedConfigurations = new Dictionary<string, string>();
+
+				ss.WriteLine("	  <property name=\"project.config\" value=\"{0}\" />", solution.ActiveConfig);
+				ss.WriteLine();
 
 				foreach (ConfigurationNode conf in solution.Configurations)
 				{
-					ss.WriteLine();
-					ss.WriteLine("	  <target name=\"{0}\" description=\"\">", conf.Name);
+					// If the name isn't in the emitted configurations, we give a high level target to the 
+					// platform specific on. This lets "Debug" point to "Debug-AnyCPU".
+					if (!emittedConfigurations.ContainsKey(conf.Name))
+					{
+						// Add it to the dictionary so we only emit one.
+						emittedConfigurations.Add(conf.Name, conf.Platform);
+
+						// Write out the target block.
+						ss.WriteLine("	  <target name=\"{0}\" description=\"{0}|{1}\" depends=\"{0}-{1}\">", conf.Name, conf.Platform);
+						ss.WriteLine("	  </target>");
+						ss.WriteLine();
+					}
+
+					// Write out the target for the configuration.
+					ss.WriteLine("	  <target name=\"{0}-{1}\" description=\"{0}|{1}\">", conf.Name, conf.Platform);
 					ss.WriteLine("		  <property name=\"project.config\" value=\"{0}\" />", conf.Name);
 					ss.WriteLine("		  <property name=\"build.debug\" value=\"{0}\" />", conf.Options["DebugInformation"].ToString().ToLower());
+					ss.WriteLine("\t\t  <property name=\"build.platform\" value=\"{0}\" />", conf.Platform);
 					ss.WriteLine("	  </target>");
 					ss.WriteLine();
 				}
@@ -559,19 +552,19 @@ namespace Prebuild.Core.Targets
                         if (item is DirectoryInfo) { }
                         else if (item is FileInfo)
                         {
-                            if (re.Match(((FileInfo)item).FullName) !=
+                            if (re.Match(item.FullName) !=
                                 System.Text.RegularExpressions.Match.Empty)
                             {
-                                Console.WriteLine("Including file: " + ((FileInfo)item).FullName);
+                                Console.WriteLine("Including file: " + item.FullName);
 
-                                using (FileStream fs = new FileStream(((FileInfo)item).FullName,
+                                using (FileStream fs = new FileStream(item.FullName,
                                                                       FileMode.Open,
                                                                       FileAccess.Read,
                                                                       FileShare.None))
                                 {
                                     using (StreamReader sr = new StreamReader(fs))
                                     {
-                                        ss.WriteLine("<!-- included from {0} -->", ((FileInfo)item).FullName);
+                                        ss.WriteLine("<!-- included from {0} -->", (item).FullName);
                                         while (sr.Peek() != -1)
                                         {
                                             ss.WriteLine(sr.ReadLine());
@@ -601,17 +594,38 @@ namespace Prebuild.Core.Targets
                 ss.WriteLine("    <target name=\"clean\" description=\"\">");
                 ss.WriteLine("        <echo message=\"Deleting all builds from all configurations\" />");
                 //ss.WriteLine("        <delete dir=\"${dist.dir}\" failonerror=\"false\" />");
+
+                // justincc: FIXME FIXME FIXME - A temporary OpenSim hack to clean up files when "nant clean" is executed.
+                // Should be replaced with extreme prejudice once anybody finds out if the CleanFiles stuff works or there is
+                // another working mechanism for specifying this stuff
                 ss.WriteLine("        <delete failonerror=\"false\">");
                 ss.WriteLine("        <fileset basedir=\"${bin.dir}\">");
                 ss.WriteLine("            <include name=\"OpenSim*.dll\"/>");
+                ss.WriteLine("            <include name=\"OpenSim*.dll.mdb\"/>");
                 ss.WriteLine("            <include name=\"OpenSim*.exe\"/>");
+                ss.WriteLine("            <include name=\"OpenSim*.exe.mdb\"/>");
                 ss.WriteLine("            <include name=\"ScriptEngines/*\"/>");
-                ss.WriteLine("            <include name=\"Physics/*\"/>");
+                ss.WriteLine("            <include name=\"Physics/*.dll\"/>");
+                ss.WriteLine("            <include name=\"Physics/*.dll.mdb\"/>");
                 ss.WriteLine("            <exclude name=\"OpenSim.32BitLaunch.exe\"/>");
                 ss.WriteLine("            <exclude name=\"ScriptEngines/Default.lsl\"/>");
                 ss.WriteLine("        </fileset>");
                 ss.WriteLine("        </delete>");
-                ss.WriteLine("        <delete dir=\"${obj.dir}\" failonerror=\"false\" />");
+
+                if (solution.Cleanup != null && solution.Cleanup.CleanFiles.Count > 0)
+                {
+                    foreach (CleanFilesNode cleanFile in solution.Cleanup.CleanFiles)
+                    {
+                        ss.WriteLine("        <delete failonerror=\"false\">");
+                        ss.WriteLine("            <fileset basedir=\"${project::get-base-directory()}\">");
+                        ss.WriteLine("                <include name=\"{0}/*\"/>", cleanFile.Pattern);
+                        ss.WriteLine("                <include name=\"{0}\"/>", cleanFile.Pattern);
+                        ss.WriteLine("            </fileset>");
+                        ss.WriteLine("        </delete>");
+                    }
+                }
+
+			    ss.WriteLine("        <delete dir=\"${obj.dir}\" failonerror=\"false\" />");
                 foreach (ProjectNode project in solution.Projects)
                 {
                     string path = Helper.MakePathRelativeTo(solution.FullPath, project.FullPath);

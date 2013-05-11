@@ -1,7 +1,42 @@
 #!/bin/sh
 
-mono bin/Prebuild.exe /target nant
-# needed until we break up OpenSim.exe
-perl -pi -e 's{OpenSim.dll}{OpenSim.exe}' OpenSim/ApplicationPlugins/LoadRegions/OpenSim.ApplicationPlugins.LoadRegions.dll.build
-mono bin/Prebuild.exe /target monodev
-mono bin/Prebuild.exe /target vs2008
+case "$1" in
+
+  'clean')
+
+    mono Prebuild/Prebuild.exe /clean
+
+  ;;
+
+
+  'autoclean')
+
+    echo y|mono Prebuild/Prebuild.exe /clean
+
+  ;;
+
+
+  'vs2010')
+  
+    mono Prebuild/Prebuild.exe /target vs2010
+  
+  ;;
+
+
+  'vs2008')
+
+    mono Prebuild/Prebuild.exe /target vs2008
+
+  ;;
+
+
+  *)
+
+    mono Prebuild/Prebuild.exe /target nant
+    mono Prebuild/Prebuild.exe /target vs2008
+
+  ;;
+
+
+esac
+

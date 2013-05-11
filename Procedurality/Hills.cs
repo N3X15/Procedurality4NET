@@ -1,11 +1,43 @@
-
+/*
+ *  Procedurality4NET Hills
+ *  Copyright 2013 Rob "N3X15" Nelson <nexisentertainment@gmail.com>
+ *
+ *
+ *  This file is part of Procedurality.
+ *  Procedurality is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *
+ *  Procedurality is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Foobar; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ */
 using System;
 
 namespace Procedurality
 {
+    /// <summary>
+    /// Hill "Algorithm"
+    /// </summary>
 	public class Hill
 	{
 		private Channel channel;
+
+        /// <summary>
+        /// Create a hill positioned on a channel.
+        /// </summary>
+        /// <param name="size">Size of the channel in pixels</param>
+        /// <param name="xp">X position of hill center</param>
+        /// <param name="yp">Y position of hill center</param>
+        /// <param name="radius">Radius of the hill</param>
 		public Hill(int size,int xp,int yp,float radius)
 		{
 			double r=(double)radius;

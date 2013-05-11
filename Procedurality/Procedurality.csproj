@@ -1,157 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-	<PropertyGroup>
-	  <ProjectType>Local</ProjectType>
-	  <ProductVersion>9.0.30729</ProductVersion>
-	  <SchemaVersion>2.0</SchemaVersion>
-	  <ProjectGuid>{DF03C7C6-0000-0000-0000-000000000000}</ProjectGuid>
-	  <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	  <ApplicationIcon></ApplicationIcon>
-	  <AssemblyKeyContainerName>
-	  </AssemblyKeyContainerName>
-	  <AssemblyName>Procedurality</AssemblyName>
-	  <DefaultClientScript>JScript</DefaultClientScript>
-	  <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-	  <DefaultTargetSchema>IE50</DefaultTargetSchema>
-	  <DelaySign>false</DelaySign>
-	  <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	  <OutputType>Library</OutputType>
-	  <AppDesignerFolder></AppDesignerFolder>
-	  <RootNamespace>Procedurality</RootNamespace>
-	  <StartupObject></StartupObject>
-	  <StartArguments></StartArguments>
-	  <FileUpgradeFlags>
-	  </FileUpgradeFlags>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	  <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-	  <BaseAddress>285212672</BaseAddress>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-	  <ConfigurationOverrideFile>
-	  </ConfigurationOverrideFile>
-	  <DefineConstants>TRACE;DEBUG</DefineConstants>
-	  <DocumentationFile></DocumentationFile>
-	  <DebugSymbols>True</DebugSymbols>
-	  <FileAlignment>4096</FileAlignment>
-	  <Optimize>False</Optimize>
-	  <OutputPath>..\bin\</OutputPath>
-	  <RegisterForComInterop>False</RegisterForComInterop>
-	  <RemoveIntegerChecks>False</RemoveIntegerChecks>
-	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-	  <WarningLevel>4</WarningLevel>
-	  <NoStdLib>False</NoStdLib>
-	  <NoWarn></NoWarn>
-	  <PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	  <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-	  <BaseAddress>285212672</BaseAddress>
-	  <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-	  <ConfigurationOverrideFile>
-	  </ConfigurationOverrideFile>
-	  <DefineConstants>TRACE</DefineConstants>
-	  <DocumentationFile></DocumentationFile>
-	  <DebugSymbols>False</DebugSymbols>
-	  <FileAlignment>4096</FileAlignment>
-	  <Optimize>True</Optimize>
-	  <OutputPath>..\bin\</OutputPath>
-	  <RegisterForComInterop>False</RegisterForComInterop>
-	  <RemoveIntegerChecks>False</RemoveIntegerChecks>
-	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-	  <WarningLevel>4</WarningLevel>
-	  <NoStdLib>False</NoStdLib>
-	  <NoWarn></NoWarn>
-	  <PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<ItemGroup>
-	  <Reference Include="System" >
-		  <Name>System</Name>
-		<Private>False</Private>
-	  </Reference>
-	  <Reference Include="System.Drawing" >
-		  <Name>System.Drawing</Name>
-		<Private>False</Private>
-	  </Reference>
-	  <Reference Include="System.Web" >
-		  <Name>System.Web</Name>
-		<Private>False</Private>
-	  </Reference>
-	  <Reference Include="System.Xml" >
-		  <Name>System.Xml</Name>
-		<Private>False</Private>
-	  </Reference>
-	</ItemGroup>
-	<ItemGroup>
-	</ItemGroup>
-	<ItemGroup>
-	  <Compile Include="AssemblyInfo.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Channel.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Craters.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="CRC32.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="ErodeHydraulic.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Hills.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Layer.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Midpoint.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Mountain.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="RiverBuilder.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Tools.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Utils.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="Voronoi.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\AStar.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\AuthorAttribute.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\Djikstra.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\HighResolutionTime.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\IPathFinder.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\PathFinder.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\PathFinderFast.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	  <Compile Include="PathFinder\PriorityQueueB.cs">
-		<SubType>Code</SubType>
-	  </Compile>
-	</ItemGroup>
-	<Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
-	<PropertyGroup>
-	  <PreBuildEvent>
-	  </PreBuildEvent>
-	  <PostBuildEvent>
-	  </PostBuildEvent>
-	</PropertyGroup>
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B918D21D-0000-0000-0000-000000000000}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Procedurality</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>
+    </AppDesignerFolder>
+    <RootNamespace>Procedurality</RootNamespace>
+    <StartupObject>
+    </StartupObject>
+    <StartArguments>
+    </StartArguments>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>True</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <Optimize>False</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <RemoveIntegerChecks>False</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>False</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>False</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <Optimize>True</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <RemoveIntegerChecks>False</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>False</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Channel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Craters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CRC32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ErodeHydraulic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hills.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Midpoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mountain.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RiverBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Voronoi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\AStar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\AuthorAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\Djikstra.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\HighResolutionTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\IPathFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\PathFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\PathFinderFast.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PathFinder\PriorityQueueB.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

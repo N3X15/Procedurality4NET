@@ -1,15 +1,46 @@
-
+/*
+ *  Procedurality4NET Craters
+ *  Copyright 2013 Rob "N3X15" Nelson <nexisentertainment@gmail.com>
+ *
+ *
+ *  This file is part of Procedurality.
+ *  Procedurality is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *
+ *  Procedurality is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Foobar; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ */
 using System;
-
 namespace Procedurality
 {
+    /// <summary>
+    /// Craters "Algorithm"
+    /// </summary>
 	public class Crater
 	{
 		private Channel channel;
+
+        /// <summary>
+        /// Create a new crater.
+        /// </summary>
+        /// <param name="size">Size of the channel</param>
+        /// <param name="xp">X position</param>
+        /// <param name="yp">Y position</param>
+        /// <param name="radius">Radius, sans falloff radius</param>
 		public Crater(int size,int xp,int yp,double radius)
 		{
 			channel = new Channel(size,size);
-			double ratio=64f/64f;
+			double ratio=1f;
 			double craterdepth = 10.0f*ratio;
 			double rimheight = 3.0f*ratio;
 			double falloff = 60.0f*ratio;

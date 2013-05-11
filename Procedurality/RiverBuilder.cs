@@ -9,6 +9,9 @@ using System.Drawing;
 
 namespace Procedurality
 {
+    /// <summary>
+    /// WARNING: THIS IS BROKEN AS HELL. RUN AWAY, DO NOT WALK.
+    /// </summary>
 	public class RiverBuilder
 	{
 		public Channel chan;

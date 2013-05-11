@@ -922,14 +922,15 @@ namespace Procedurality
 		/// Smooths below-water surfaces and, optionally, adds beaches.
 		/// </summary>
 		/// <param name="waterlevel">
-		/// A <see cref="System.Single"/>
+		/// A single specifying how high the water is.
 		/// </param>
 		/// <param name="beaches">
-		/// A <see cref="System.Boolean"/>
+		/// Create beaches?
 		/// </param>
 		/// <returns>
-		/// A <see cref="Channel"/>
+		/// The modified channel.
 		/// </returns>
+        /// <remarks>One of Rob's stupid modifications.</remarks>
 		public Channel silt(float waterlevel,bool beaches)
 		{
 			// 1. Copy Image

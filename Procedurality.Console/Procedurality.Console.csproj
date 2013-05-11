@@ -3,7 +3,7 @@
 	  <ProjectType>Local</ProjectType>
 	  <ProductVersion>9.0.30729</ProductVersion>
 	  <SchemaVersion>2.0</SchemaVersion>
-	  <ProjectGuid>{01F41C34-0000-0000-0000-000000000000}</ProjectGuid>
+	  <ProjectGuid>{9117A030-0000-0000-0000-000000000000}</ProjectGuid>
 	  <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	  <ApplicationIcon></ApplicationIcon>
 	  <AssemblyKeyContainerName>
@@ -83,7 +83,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Procedurality\Procedurality.csproj">
 		<Name>Procedurality</Name>
-		<Project>{DF03C7C6-0000-0000-0000-000000000000}</Project>
+		<Project>{B918D21D-0000-0000-0000-000000000000}</Project>
 		<Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
 		<Private>False</Private>
 	  </ProjectReference>
@@ -101,7 +101,7 @@
 	  <Compile Include="IO\LLRAW.cs">
 		<SubType>Code</SubType>
 	  </Compile>
-	</ItemGroup>
+  </ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 	<PropertyGroup>
 	  <PreBuildEvent>

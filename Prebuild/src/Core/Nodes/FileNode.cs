@@ -54,7 +54,19 @@ namespace Prebuild.Core.Nodes
 		/// <summary>
 		/// 
 		/// </summary>
-		EmbeddedResource
+		EmbeddedResource,
+		/// <summary>
+		/// 
+		/// </summary>
+		ApplicationDefinition,
+		/// <summary>
+		/// 
+		/// </summary>
+		Page,
+        /// <summary>
+        /// 
+        /// </summary>
+        Copy
 	}
 
 	/// <summary>
@@ -237,6 +249,9 @@ namespace Prebuild.Core.Nodes
 			if (subType != String.Empty)
 				m_SubType = (SubType)Enum.Parse(typeof(SubType), subType);
 
+            Console.WriteLine("[FileNode]:BuildAction is {0}", buildAction);
+
+
 			m_ResourceName = Helper.AttributeValue(node, "resourceName", m_ResourceName.ToString());
 			this.m_Link = bool.Parse(Helper.AttributeValue(node, "link", bool.FalseString));
 			if ( this.m_Link == true )
@@ -264,6 +279,12 @@ namespace Prebuild.Core.Nodes
 				m_Valid = false;
 				Kernel.Instance.Log.Write(LogType.Warning, "File does not exist: {0}", m_Path);
 			}
+
+            if (System.IO.Path.GetExtension(m_Path) == ".settings")
+            {
+                m_SubType = SubType.Settings;
+                m_BuildAction = BuildAction.None;
+            }
 		}
 
 		#endregion
