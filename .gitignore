@@ -19,3 +19,5 @@ bin
 *.VisualState.xml
 *~
 *.bak
+/Procedurality.sln
+/Procedurality.suo
