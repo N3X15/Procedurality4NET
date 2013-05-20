@@ -36,35 +36,37 @@ namespace Procedurality
 		public static int X = 0;
 		public static int Y = 1;
 		public static int SEED = 2;
-	
-		private int size;
+
+        private int sizeY;
+        private int sizeX;
 		private Random random;
 		private Channel dist1;
 		private Channel dist2;
 		private Channel dist3;
-		private Channel hit;
-	
-		public Voronoi(int size, int x_domains, int y_domains, int checkradius, float randomness, long seed)
-		{
-			this.ActuallyDoVoronoi(size, x_domains, y_domains, checkradius, randomness, seed, false);
-		}
+        private Channel hit;
+
+        public Voronoi(int sizeX, int sizeY, int x_domains, int y_domains, int checkradius, float randomness, long seed, bool border = false)
+        {
+            this.ActuallyDoVoronoi(sizeX,sizeY, x_domains, y_domains, checkradius, randomness, seed, border);
+        }
+
+        public Voronoi(int size, int x_domains, int y_domains, int checkradius, float randomness, long seed, bool border = false)
+        {
+            this.ActuallyDoVoronoi(size,size, x_domains, y_domains, checkradius, randomness, seed, border);
+        }
 		
-		public Voronoi(int size, int x_domains, int y_domains, int checkradius, float randomness, long seed, bool border) 
+		private void ActuallyDoVoronoi(int sizeX, int sizeY, int x_domains, int y_domains, int checkradius, float randomness, long seed, bool border)
 		{
-			this.ActuallyDoVoronoi(size, x_domains, y_domains, checkradius, randomness, seed, border);
-		}
-		
-		private void ActuallyDoVoronoi(int size, int x_domains, int y_domains, int checkradius, float randomness, long seed, bool border)
-		{
-			this.size = size;
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
 			x_domains = Math.Max(1, x_domains);
 			y_domains = Math.Max(1, y_domains);
 			checkradius = Math.Min(Math.Max(1, checkradius), Math.Max(x_domains, y_domains));
 			random = new Random((int)seed);
-			dist1 = new Channel(size, size);
-			dist2 = new Channel(size, size);
-			dist3 = new Channel(size, size);
-			hit = new Channel(size, size);
+			dist1 = new Channel(sizeX, sizeY);
+            dist2 = new Channel(sizeX, sizeY);
+            dist3 = new Channel(sizeX, sizeY);
+            hit = new Channel(sizeX, sizeY);
 			
 			// fill in hitpoints according to distribution
 			float[,,] domains = new float[x_domains,y_domains,3];
@@ -83,11 +85,13 @@ namespace Procedurality
 			}
 	
 			// fill in pixelvalues
-			for (int y = 0; y < size; y++) {
-				float y_coord = (float)y/size;
+            for (int y = 0; y < sizeY; y++)
+            {
+                float y_coord = (float)y / sizeY;
 				int j = (int)(y_coord * y_domains);
-				for (int x = 0; x < size; x++) {
-					float x_coord = (float)x/size;
+                for (int x = 0; x < sizeX; x++)
+                {
+                    float x_coord = (float)x / sizeX;
 					float d1 = float.MaxValue;
 					float d2 = float.MaxValue;
 					float d3 = float.MaxValue;
@@ -155,9 +159,11 @@ namespace Procedurality
 		}
 	
 		public Channel getDistance(float c1, float c2, float c3) {
-			Channel channel = new Channel(size, size);
-			for (int y = 0; y < size; y++) {
-				for (int x = 0; x < size; x++) {
+            Channel channel = new Channel(sizeX, sizeY);
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int x = 0; x < sizeX; x++)
+                {
 					channel.putPixel(x, y, c1*dist1.getPixel(x, y) + c2*dist2.getPixel(x, y) + c3*dist3.getPixel(x, y));
 				}
 			}
@@ -167,6 +173,5 @@ namespace Procedurality
 		public Channel getHitpoint() {
 			return hit;
 		}
-		
-	}
+    }
 }

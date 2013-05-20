@@ -34,18 +34,19 @@ namespace Procedurality
         /// <summary>
         /// Create a hill positioned on a channel.
         /// </summary>
-        /// <param name="size">Size of the channel in pixels</param>
+        /// <param name="sizeX">Size of the channel in pixels</param>
+        /// <param name="sizeY">Size of the channel in pixels</param>
         /// <param name="xp">X position of hill center</param>
         /// <param name="yp">Y position of hill center</param>
         /// <param name="radius">Radius of the hill</param>
-		public Hill(int size,int xp,int yp,float radius)
+		public Hill(int sizeX,int sizeY, int xp,int yp,float radius)
 		{
 			double r=(double)radius;
-			channel = new Channel(size,size);
+			channel = new Channel(sizeX,sizeY);
 			double hill_height=5.0d*(radius/40.0d);
-			for(int x=0;x<size;x++)
+			for(int x=0;x<sizeX;x++)
 			{
-				for(int y=0;y<size;y++)
+				for(int y=0;y<sizeY;y++)
 				{
 					double dx = (double)(yp-x);
 					double dy = (double)(xp-y);

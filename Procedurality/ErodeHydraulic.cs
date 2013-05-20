@@ -607,7 +607,7 @@ namespace Procedurality
 				s.channelAdd(w.copy().multiply(erosion_water));
 	
 				// water and sediment are transported
-				float h, h1, h2, h3, h4, d1, d2, d3, d4, total_height, total_height_diff, total_height_diff_inv, avr_height, water_amount, sediment_amount;
+				float h, h1, h2, h3, h4, d1, d2, d3, d4, total_height, total_height_diff, total_height_diff_inv, avr_height, water_amount;
 				int cells;
 				for (int y = 0; y < channel.height; y++) {
 					for (int x = 0; x < channel.width; x++) {

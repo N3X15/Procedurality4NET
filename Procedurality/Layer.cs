@@ -81,18 +81,11 @@ namespace Procedurality
 		}
 		
 		public void saveAsPNG(String filename) {
-			
+
+            Console.Write("Saving " + filename + "...");
 			//Console.WriteLine("Creating bitmap, range ["+this.findMin().ToString()+","+this.findMax().ToString()+"]...");
 			
-			Bitmap bmp = new Bitmap(this.r.getHeight(), this.r.getWidth());
-
-            const int pallete = 256;
-
-            Color[] grays = new Color[pallete];
-            for (int i = 0; i < grays.Length; i++)
-            {
-                grays[i] = Color.FromArgb(i, i, i);
-            }
+			Bitmap bmp = new Bitmap(this.getWidth(), this.getHeight());
 
             for (int y = 0; y < this.getHeight(); y++)
             {
@@ -113,14 +106,16 @@ namespace Procedurality
 					int bi = ((int)(b.getPixel(x, y)*255 + .5f)) & 0xff;
 					int ai;
 					if (a != null) {
-						ai = ((int)(a.getPixel(x, y)*255 + .5f)) & 0xff;
+                        ai = ((int)(a.getPixel(x, y) * 255 + .5f)) & 0xff;
+                        bmp.SetPixel(x, y, Color.FromArgb(ri, gi, bi, ai));
 					} else {
-						ai = 255;
+                        bmp.SetPixel(x, y, Color.FromArgb(ri, gi, bi));
 					}
-					bmp.SetPixel(x,y,Color.FromArgb(ri,gi,bi,ai));
+                    // Weirdly, x keeps going > Width.  Adding this.
+                    //if (x >= bmp.Width || y >= bmp.Height)
+                    //    continue;
                 }
             }
-			Console.Write("Saving "+filename+"...");
 			try {
 				bmp.Save(filename,ImageFormat.Png);
 			} catch (IOException e) {

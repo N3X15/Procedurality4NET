@@ -29,21 +29,25 @@ namespace Procedurality
 	
 		private Random random;
 		public Channel channel;
-	
-		public Midpoint(int size, int base_freq, float pers, long seed) {
-			if(!Utils.isPowerOf2(size))
-				throw new Exception("size must be power of 2");
-			int iterations = Utils.powerOf2Log2(size);
+
+        public Midpoint(int sizeX, int sizeY, int base_freq, float pers, long seed)
+        {
+            if (!Utils.isPowerOf2(sizeX))
+                throw new Exception("sizeX must be power of 2");
+            if (!Utils.isPowerOf2(sizeY))
+                throw new Exception("sizeY must be power of 2");
+            int iterations = Math.Max(Utils.powerOf2Log2(sizeX),Utils.powerOf2Log2(sizeY));
+            int sizeMax = Math.Max(sizeX, sizeY);
 			base_freq = Math.Max(base_freq, 0);
 			base_freq = Math.Min(base_freq, iterations);
 			random = new Random((int)seed);
-			channel = new Channel(size, size);
+			channel = new Channel(sizeX, sizeY);
 	
 			
 			int x_block, y_block, x, y;
 			
 			if (base_freq > 0) {
-				int block_size = size>>base_freq;
+                int block_size = sizeMax >> base_freq;
 				for (x_block = 0; x_block < (1<<base_freq); x_block++) {
 					for (y_block = 0; y_block < (1<<base_freq); y_block++) {
 						x = x_block*block_size;
@@ -56,8 +60,8 @@ namespace Procedurality
 			float v1, v2, v3, v4, v5, v6, v7, v8, v9;
 	
 			for (int i = base_freq; i < iterations; i++) {
-				int block_size = size>>i;
-				int block_size_half = size>>(i + 1);
+                int block_size = sizeMax >> i;
+                int block_size_half = sizeMax >> (i + 1);
 				float amp = (float)Math.Pow(pers, i - base_freq);
 				float amp_half = 0.5f*amp;
 				// calculate center midpoints
@@ -65,9 +69,9 @@ namespace Procedurality
 					for (x_block = 0, x = 0; x_block < (1<<i); x_block++) {
 						for (y_block = 0, y = 0; y_block < (1<<i); y_block++) {
 							v1 = channel.getPixel(x, y);
-							v2 = channel.getPixel((x + block_size) % size, y);
-							v3 = channel.getPixel(x, (y + block_size) % size);
-							v4 = channel.getPixel((x + block_size) % size, (y + block_size) % size);
+                            v2 = channel.getPixel((x + block_size) % sizeX, y);
+                            v3 = channel.getPixel(x, (y + block_size) % sizeY);
+                            v4 = channel.getPixel((x + block_size) % sizeX, (y + block_size) % sizeY);
 							v5 = 0.25f*(v1 + v2 + v3 + v4) + (float)random.NextDouble()*amp - amp_half;
 							channel.putPixel(x + block_size_half, y + block_size_half, v5);
 							y+= block_size;
@@ -93,9 +97,9 @@ namespace Procedurality
 						x = x_block*block_size;
 						for (y_block = 0, y = 0; y_block < (1<<i); y_block++) {
 							v1 = channel.getPixel(x, y);
-							v2 = channel.getPixel((x + block_size) % size, y);
-							v3 = channel.getPixel(x, (y + block_size) % size);
-							v4 = channel.getPixel((x + block_size) % size, (y + block_size) % size);
+                            v2 = channel.getPixel((x + block_size) % sizeX, y);
+                            v3 = channel.getPixel(x, (y + block_size) % sizeY);
+                            v4 = channel.getPixel((x + block_size) % sizeX, (y + block_size) % sizeY);
 							v5 = 0.25f*(v1 + v2 + v3 + v4) + (float)random.NextDouble()*amp - amp_half;
 							channel.putPixel(x + block_size_half, y + block_size_half, v5);
 							y+= block_size;
@@ -106,9 +110,9 @@ namespace Procedurality
 						for (y_block = 0; y_block < (1<<i); y_block+= (1<<i) - 1) {
 							y = y_block*block_size;
 							v1 = channel.getPixel(x, y);
-							v2 = channel.getPixel((x + block_size) % size, y);
-							v3 = channel.getPixel(x, (y + block_size) % size);
-							v4 = channel.getPixel((x + block_size) % size, (y + block_size) % size);
+                            v2 = channel.getPixel((x + block_size) % sizeX, y);
+                            v3 = channel.getPixel(x, (y + block_size) % sizeY);
+                            v4 = channel.getPixel((x + block_size) % sizeX, (y + block_size) % sizeY);
 							v5 = 0.25f*(v1 + v2 + v3 + v4) + (float)random.NextDouble()*amp - amp_half;
 							channel.putPixel(x + block_size_half, y + block_size_half, v5);
 						}
@@ -121,10 +125,10 @@ namespace Procedurality
 						for (y_block = 0, y = 0; y_block < (1<<i); y_block++) {
 							v1 = channel.getPixel(x, y);
 							v5 = channel.getPixel(x + block_size_half, y + block_size_half);
-							v2 = channel.getPixel((x + block_size) % size, y);
-							v3 = channel.getPixel(x, (y + block_size) % size);
-							v6 = channel.getPixel(((x - block_size_half) + size) % size, (y + block_size_half) % size);
-							v7 = channel.getPixel((x + block_size_half) % size, ((y - block_size_half) + size) % size);
+                            v2 = channel.getPixel((x + block_size) % sizeX, y);
+                            v3 = channel.getPixel(x, (y + block_size) % sizeY);
+                            v6 = channel.getPixel(((x - block_size_half) + sizeX) % sizeX, (y + block_size_half) % sizeY);
+                            v7 = channel.getPixel((x + block_size_half) % sizeX, ((y - block_size_half) + sizeY) % sizeY);
 							v8 = 0.25f*(v1 + v3 + v5 + v6) + (float)random.NextDouble()*amp - amp_half;
 							v9 = 0.25f*(v1 + v2 + v5 + v7) + (float)random.NextDouble()*amp - amp_half;
 							channel.putPixel(x, y + block_size_half, v8);
@@ -157,10 +161,10 @@ namespace Procedurality
 						for (y_block = 0, y = 0; y_block < (1<<i); y_block++) {
 							v1 = channel.getPixel(x, y);
 							v5 = channel.getPixel(x + block_size_half, y + block_size_half);
-							v2 = channel.getPixel((x + block_size) % size, y);
-							v3 = channel.getPixel(x, (y + block_size) % size);
-							v6 = channel.getPixel(((x - block_size_half) + size) % size, (y + block_size_half) % size);
-							v7 = channel.getPixel((x + block_size_half) % size, ((y - block_size_half) + size) % size);
+                            v2 = channel.getPixel((x + block_size) % sizeX, y);
+                            v3 = channel.getPixel(x, (y + block_size) % sizeY);
+                            v6 = channel.getPixel(((x - block_size_half) + sizeX) % sizeX, (y + block_size_half) % sizeY);
+                            v7 = channel.getPixel((x + block_size_half) % sizeX, ((y - block_size_half) + sizeY) % sizeY);
 							v8 = 0.25f*(v1 + v3 + v5 + v6) + (float)random.NextDouble()*amp - amp_half;
 							v9 = 0.25f*(v1 + v2 + v5 + v7) + (float)random.NextDouble()*amp - amp_half;
 							channel.putPixel(x, y + block_size_half, v8);
@@ -174,10 +178,10 @@ namespace Procedurality
 							y = y_block*block_size;
 							v1 = channel.getPixel(x, y);
 							v5 = channel.getPixel(x + block_size_half, y + block_size_half);
-							v2 = channel.getPixel((x + block_size) % size, y);
-							v3 = channel.getPixel(x, (y + block_size) % size);
-							v6 = channel.getPixel(((x - block_size_half) + size) % size, (y + block_size_half) % size);
-							v7 = channel.getPixel((x + block_size_half) % size, ((y - block_size_half) + size) % size);
+                            v2 = channel.getPixel((x + block_size) % sizeX, y);
+                            v3 = channel.getPixel(x, (y + block_size) % sizeY);
+                            v6 = channel.getPixel(((x - block_size_half) + sizeX) % sizeX, (y + block_size_half) % sizeY);
+                            v7 = channel.getPixel((x + block_size_half) % sizeX, ((y - block_size_half) + sizeY) % sizeY);
 							v8 = 0.25f*(v1 + v3 + v5 + v6) + (float)random.NextDouble()*amp - amp_half;
 							v9 = 0.25f*(v1 + v2 + v5 + v7) + (float)random.NextDouble()*amp - amp_half;
 							channel.putPixel(x, y + block_size_half, v8);

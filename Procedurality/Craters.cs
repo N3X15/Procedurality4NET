@@ -37,9 +37,9 @@ namespace Procedurality
         /// <param name="xp">X position</param>
         /// <param name="yp">Y position</param>
         /// <param name="radius">Radius, sans falloff radius</param>
-		public Crater(int size,int xp,int yp,double radius)
+		public Crater(int sizeX,int sizeY, int xp,int yp,double radius)
 		{
-			channel = new Channel(size,size);
+			channel = new Channel(sizeX,sizeY);
 			double ratio=1f;
 			double craterdepth = 10.0f*ratio;
 			double rimheight = 3.0f*ratio;

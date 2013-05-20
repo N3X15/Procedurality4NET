@@ -36,12 +36,20 @@ namespace Procedurality
 			public uint X;
 			public uint Y;
 		}
+        class Size {
+            public uint Height;
+            public uint Width;
+            public Size() { }
+            public Size(uint H, uint W)
+            {
+                this.Height = H;
+                this.Width = W;
+            }
+        }
 		private static bool IsRunningOnMono()
 		{
 			return Type.GetType ("Mono.Runtime") != null;
 		}
-		private Point RegionCorner;
-		private static uint Size;
 		
 		public static void Main(String[] args) 
 		{
@@ -53,8 +61,10 @@ namespace Procedurality
 			
 			String file = "in.png";
 			String ofile = "out";
-			int seed = DateTime.Now.Millisecond;
-			Size = 256;
+			long seed = DateTime.Now.Millisecond;
+            Size size = new Size();
+			size.Height = 256;
+            size.Width = 256;
 			bool FlipV=false;
 			if(CommandLine["flip-v"] != null)
 				FlipV=true;
@@ -65,18 +75,30 @@ namespace Procedurality
 			
 			// --seed=1234567890
 			if(CommandLine["seed"] != null) 
-            	seed=int.Parse(CommandLine["seed"]);
+            	seed=long.Parse(CommandLine["seed"]);
 			
 			Console.WriteLine(" * Random seed: "+seed.ToString());
-			
-			if(CommandLine["size"] != null)
-				Size=uint.Parse(CommandLine["size"]);
+
+            if (CommandLine["size"] != null)
+            {
+                // --size=256x256
+                string[] sc = CommandLine["size"].Split('x');
+                if (sc.Length == 1)
+                {
+                    size.Height = size.Width = uint.Parse(sc[0]);
+                }
+                else if (sc.Length == 2)
+                {
+                    size.Height = uint.Parse(sc[0]);
+                    size.Width = uint.Parse(sc[1]);
+                }
+            }
 			
 			Channel terrain;
 			if(CommandLine["perlin"] != null) 
 			{
 				Console.Write("Generating terrain with perlin noise...");
-				terrain = new Mountain((int)Size, Utils.powerOf2Log2((int)Size) - 6, 0.5f, seed).toChannel();
+				terrain = new Mountain((int)size.Height, (int)size.Width, Utils.powerOf2Log2((int)size.Width) - 6, 0.5f, seed).toChannel();
 				Console.WriteLine(" DONE!");
 			}
 			else if(CommandLine["in"] != null)
@@ -97,13 +119,13 @@ namespace Procedurality
 			else if(CommandLine["hills"] != null)
 			{
 				Console.Write("Generating "+CommandLine["hills"]+" hills...");
-				terrain=HillsAlgo((int)Size,int.Parse(CommandLine["hills"]),seed);
+				terrain=HillsAlgo((int)size.Height,(int)size.Width,int.Parse(CommandLine["hills"]),(int)seed);
 				Console.WriteLine(" DONE!");
 			}
 			else if(CommandLine["craters"] != null)
 			{
 				Console.Write("Generating "+CommandLine["craters"]+" craters...");
-				terrain=CratersAlgo((int)Size,int.Parse(CommandLine["craters"]),seed);
+                terrain = CratersAlgo((int)size.Height, (int)size.Width, int.Parse(CommandLine["craters"]), (int)seed);
 				Console.WriteLine(" DONE!");
 			}
 			else
@@ -123,7 +145,7 @@ namespace Procedurality
 				
 				Console.WriteLine("Adding cliffs.");
 				// add mountain peaks
-				Voronoi voronoi = new Voronoi(256, 4, 4, 1, 1f, seed);
+                Voronoi voronoi = new Voronoi((int)size.Height, (int)size.Width, 4, 4, 1, 1f, seed);
 				Channel cliffs = voronoi.getDistance(-1f, 1f, 0f).brightness(1.5f).multiply(0.33f);
 				terrain.multiply(0.67f).channelAdd(cliffs);
 				terrain.channelSubtract(voronoi.getDistance(1f, 0f, 0f).gamma(.5f).flipV().rotate(90));
@@ -135,7 +157,7 @@ namespace Procedurality
 					hills=float.Parse(CommandLine["hillratio"]);
 				
 				Console.WriteLine("Ice age erosion in progress.");
-				terrain.perturb(new Midpoint((int)Size, 2, hills, seed).toChannel(), 0.25f);		
+                terrain.perturb(new Midpoint((int)size.Height, (int)size.Width, 2, hills, seed).toChannel(), 0.25f);		
 			}
 			
 			if(CommandLine["thermal"]!=null)
@@ -144,7 +166,7 @@ namespace Procedurality
 				if(CommandLine["hillratio"]!=null)
 					hills=float.Parse(CommandLine["hillratio"]);
 				
-				terrain.erodeThermal((24f - hills*12f)/(int)Size, (int)Size>>2);	
+				terrain.erodeThermal((24f - hills*12f)/(int)size.Height, (int)size.Height>>2);	
 			}
 			
 			// Hydraulic Erosion
@@ -157,7 +179,7 @@ namespace Procedurality
 				if(CommandLine["hillratio"]!=null)
 					hills=float.Parse(CommandLine["hillratio"]);
 				
-				terrain.erode((24f - hills*12f)/(int)Size, (int)Size>>2);
+				terrain.erode((24f - hills*12f)/(int)size.Height, (int)size.Height>>2);
 			}
 			if(CommandLine["slow-hydro"]!=null)
 			{
@@ -173,6 +195,7 @@ namespace Procedurality
 				wl=float.Parse(CommandLine["add-silt"]);
 				terrain=terrain.silt(wl,true);
 			}
+            /*
 			if(CommandLine["add-river"]!=null)
 			{
 				terrain.normalize(1f,0.3f);
@@ -186,6 +209,7 @@ namespace Procedurality
 				}
 				File.WriteAllText(ofile+".river.txt",rpath);
 			}
+            */
 			terrain.smooth(1);
 			
 			float nm=0f;
@@ -224,30 +248,35 @@ Usage help:
 			Console.WriteLine("\tProcedurality.exe [--help] [--erode=(hydraulic|thermal|iceage)]");
 	 		Console.WriteLine("\t  [--addcliffs] [--seed=[#]] [--addcrater=x,y] [--addhill=x,y]");
 			Console.WriteLine("\t  [--perlin] [--hills=#OfHills] [--craters=#OfCraters] [--features=#]");
-	 		Console.WriteLine("\t  [--hillratio=#.#] [--maxheight=#.#] [--maxdepth=#.#] [--size=#]");
+	 		Console.WriteLine("\t  [--hillratio=#.#] [--maxheight=#.#] [--maxdepth=#.#] [--size=#[x#]]");
 	 		Console.WriteLine("\t  [--in=InputFile.png] OutputFile.png");
 			
 		}
 	
 		public static Channel LoadTerrain(String file)
 		{
-			Bitmap bitmap = new Bitmap(file);
-			try
-			{
-				Channel terrain = new Channel(bitmap.Width,bitmap.Height);
-	            for (int x = 0; x < bitmap.Width; x++)
-	            {
-	                for (int y = 0; y < bitmap.Height; y++)
+            using(FileStream stream = new FileStream(file,FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                Bitmap bitmap = new Bitmap(stream);
+			    try
+			    {
+                    Channel terrain = new Channel(bitmap.Width, bitmap.Height);
+                    Console.WriteLine("LOADED {0}x{1} BITMAP!", bitmap.Height, bitmap.Width);
+                    for (int x = 0; x < bitmap.Width; x++)
 	                {
-	                    terrain.putPixel(x, y, bitmap.GetPixel(x, bitmap.Height - y - 1).GetBrightness());
+                        for (int y = 0; y < bitmap.Height; y++)
+	                    {
+	                        terrain.putPixel(x, y, bitmap.GetPixel(x, y).GetBrightness());
+	                    }
 	                }
-	            }
-				return terrain;//.invert();
-			} catch(IOException)
-			{
-				Console.WriteLine("Cannot find "+file+", using blank channel.");
-				return new Channel(256,256);
-			}
+                    Console.WriteLine("LOADED {0}x{1} CHANNEL!", terrain.getHeight(), terrain.getWidth());
+				    return terrain;//.invert();
+			    } catch(IOException)
+			    {
+				    Console.WriteLine("Cannot find "+file+", using blank channel.");
+				    return new Channel(256,256);
+			    }
+            }
 		}
 		
 		public static String RemoveExtension(String s) 
@@ -271,18 +300,18 @@ Usage help:
 			return filename.Substring(0, extensionIndex);
 		}
 		
-		public static Channel HillsAlgo(int size,int numHills,int seed)
+		public static Channel HillsAlgo(int sizeX, int sizeY,int numHills,int seed)
 		{
 			Console.WriteLine();
-			Channel chan = new Channel(size,size);
+			Channel chan = new Channel(sizeX,sizeY);
 			Random rand = new Random(seed);
 			for(int i = 0; i<numHills;)
 			{
-				int x = rand.Next(0,size);
-				int y = rand.Next(0,size);
+				int x = rand.Next(0,sizeX);
+				int y = rand.Next(0,sizeY);
 				
 				double radius=((rand.NextDouble()*84.0)-20);
-				Channel crater = (new Hill(size,x,y,(float)radius)).toChannel();
+				Channel crater = (new Hill(sizeX,sizeY,x,y,(float)radius)).toChannel();
 				if(crater.findMax()!=1.0)
 				{
 					continue;
@@ -297,31 +326,31 @@ Usage help:
 			return chan;
 		}
 		
-		Point Global2Local(uint x,uint y)
+		Point Global2Local(uint x,uint y,Point corner)
 		{
 			Point p = new Point();
-			p.X=x-RegionCorner.X;
-			p.Y=y-RegionCorner.Y;
+            p.X = x - corner.X;
+            p.Y = y - corner.Y;
 			return p;
 		}
 		
-		Point Local2Global(uint x,uint y)
+		Point Local2Global(uint x,uint y,Point corner)
 		{
 			Point p = new Point();
-			p.X=x+RegionCorner.X;
-			p.Y=y+RegionCorner.Y;
+            p.X = x + corner.X;
+            p.Y = y + corner.Y;
 			return p;
 		}
 		
-		public static Channel CratersAlgo(int size,int numCraters,int seed)
+		public static Channel CratersAlgo(int sizeX,int sizeY, int numCraters,int seed)
 		{
-			Channel chan = new Channel(size,size);
+			Channel chan = new Channel(sizeX,sizeY);
 			Console.WriteLine();
 			Random rand = new Random(seed);
 			for(int i = 0; i<numCraters;)
 			{
-				int x = rand.Next(0,size);
-				int y = rand.Next(0,size);
+				int x = rand.Next(0,sizeX);
+				int y = rand.Next(0,sizeY);
 				double radius=(rand.NextDouble()*84.0)-20;
 				
 				// Clamp
@@ -329,7 +358,7 @@ Usage help:
 				//x=(y<0) ? 0 : ((y>size-1) ? size-1 : y);
 			 	//radius=(radius<20.0) ? 20.0 : ((radius>84.0) ? 84.0 : radius);
 				
-				Channel crater = (new Crater(size,x,y,radius)).toChannel();
+				Channel crater = (new Crater(sizeX,sizeY,x,y,radius)).toChannel();
 				if(crater.findMax()!=1.0)
 				{
 					continue;
